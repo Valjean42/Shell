@@ -12,3 +12,10 @@ class Party:
                 str1 += str(mon)
                 str1 += "\n"
         return str1
+
+    def living_mons(self):
+        available_mons = []
+        for i in range(1, 5):
+            if self.mons[i] is not None and self.mons[i].temp_stats[0] > 0:
+                available_mons.append(i + 1)
+        return len(available_mons)

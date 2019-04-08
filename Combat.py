@@ -118,10 +118,14 @@ class Combat:
             else:
                 print("Can't run from a trainer battle!")
         elif action == 1:
-            self.player_switch(party1, party2)
-            self.battlers = {1: party1.mons[0], 2: party2.mons[0]}
-            if party1.mons[0].temp_stats[5] < party2.mons[0].temp_stats[5]:
-                self.battlers = {2: party2.mons[0], 1: party1.mons[0]}
+            if party1.living_mons() > 1:
+                self.player_switch(party1, party2)
+                self.battlers = {1: party1.mons[0], 2: party2.mons[0]}
+                if party1.mons[0].temp_stats[5] < party2.mons[0].temp_stats[5]:
+                    self.battlers = {2: party2.mons[0], 1: party1.mons[0]}
+            else:
+                print("Can't switch!")
+                self.show_text("Can't switch!", font)
             if str(enemy_move) == "switch":
                 self.ai_switch(party1, party2)
                 self.battlers = {1: party1.mons[0], 2: party2.mons[0]}
@@ -234,7 +238,8 @@ class Combat:
                     print("The enemy attacks with " + str(enemy_move))
                     if self.attack(party2.mons[0], enemy_move, party1.mons[0]) == "ded":
                         print("Your mon died")
-                        if self.player_switch(party1, party2) == "able":
+                        if party1.living_mons() > 1:
+                            self.player_switch(party1, party2)
                             self.battlers = {1: party1.mons[0], 2: party2.mons[0]}
                             if party1.mons[0].temp_stats[5] < party2.mons[0].temp_stats[5]:
                                 self.battlers = {2: party2.mons[0], 1: party1.mons[0]}
@@ -266,7 +271,8 @@ class Combat:
                         print("The enemy attacks with " + str(enemy_move))
                         if self.to_continue and self.to_attack and self.attack(party2.mons[0], enemy_move, party1.mons[0]) == "ded":
                             print("Your mon died")
-                            if self.player_switch(party1, party2) == "able":
+                            if party1.living_mons() > 1:
+                                self.player_switch(party1, party2)
                                 self.battlers = {1: party1.mons[0], 2: party2.mons[0]}
                                 if party1.mons[0].temp_stats[5] < party2.mons[0].temp_stats[5]:
                                     self.battlers = {2: party2.mons[0], 1: party1.mons[0]}
@@ -328,3 +334,12 @@ class Combat:
         else:
             print("but it missed!")
             return "miss"
+
+    def show_text(self, text, font):
+        self.screen.blit(pygame.image.load("Textbox.png"))
+        self.screen.blit(font.render(text, False, (0, 0, 0)))
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_c:
+                        break

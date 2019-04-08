@@ -27,9 +27,62 @@ class Combat:
         list(self.battlers.values())[1].ability.activate(list(self.battlers.values())[1], list(self.battlers.values())[0], None, "in")
         self.to_continue = True
         pygame.display.flip()
+        self.screen = screen
         self.turn(party1, party2, 1)
         
     def turn(self, party1, party2, amount):
+        font = pygame.font.SysFont('Power Red and Blue', 70)
+        self.screen.blit(font.render("What will " + party1.mons[0].name + " do?", False, (0, 0, 0)), (100, 860))
+        self.screen.blit(font.render("Fight", False, (255, 0, 0)), (1300, 860))
+        self.screen.blit(font.render("Pokemon", False, (0, 0, 0)), (1300, 960))
+        self.screen.blit(font.render("Bag", False, (0, 0, 0)), (1600, 860))
+        self.screen.blit(font.render("Run", False, (0, 0, 0)), (1600, 960))
+        pygame.display.flip()
+        keys = pygame.key.get_pressed()
+        action = 0
+        while not keys[pygame.K_c]:
+            print(action)
+            pygame.time.wait(20)
+            self.screen.blit(pygame.image.load("imgs/Textbox.png"), (0, 1080-261))
+            self.screen.blit(font.render("What will " + party1.mons[0].name + " do?", False, (0, 0, 0)), (100, 860))
+            if action == 0:
+                self.screen.blit(font.render("Fight", False, (255, 0, 0)), (1300, 860))
+                self.screen.blit(font.render("Pokemon", False, (0, 0, 0)), (1300, 960))
+                self.screen.blit(font.render("Bag", False, (0, 0, 0)), (1600, 860))
+                self.screen.blit(font.render("Run", False, (0, 0, 0)), (1600, 960))
+            elif action == 1:
+                self.screen.blit(font.render("Fight", False, (0, 0, 0)), (1300, 860))
+                self.screen.blit(font.render("Pokemon", False, (255, 0, 0)), (1300, 960))
+                self.screen.blit(font.render("Bag", False, (0, 0, 0)), (1600, 860))
+                self.screen.blit(font.render("Run", False, (0, 0, 0)), (1600, 960))
+            elif action == 2:
+                self.screen.blit(font.render("Fight", False, (0, 0, 0)), (1300, 860))
+                self.screen.blit(font.render("Pokemon", False, (0, 0, 0)), (1300, 960))
+                self.screen.blit(font.render("Bag", False, (255, 0, 0)), (1600, 860))
+                self.screen.blit(font.render("Run", False, (0, 0, 0)), (1600, 960))
+            else:
+                self.screen.blit(font.render("Fight", False, (0, 0, 0)), (1300, 860))
+                self.screen.blit(font.render("Pokemon", False, (0, 0, 0)), (1300, 960))
+                self.screen.blit(font.render("Bag", False, (0, 0, 0)), (1600, 860))
+                self.screen.blit(font.render("Run", False, (255, 0, 0)), (1600, 960))
+            if keys[pygame.K_DOWN] and action == 0:
+                action = 1
+            if keys[pygame.K_UP] and action == 1:
+                action = 0
+            if keys[pygame.K_DOWN] and action == 2:
+                action = 3
+            if keys[pygame.K_UP] and action == 3:
+                action = 2
+            if keys[pygame.K_LEFT] and action == 3:
+                action = 1
+            if keys[pygame.K_RIGHT] and action == 1:
+                action = 3
+            if keys[pygame.K_LEFT] and action == 2:
+                action = 0
+            if keys[pygame.K_RIGHT] and action == 0:
+                action = 2
+            keys = pygame.key.get_pressed()
+
 
         print("Your mon:")
         print(str(party1.mons[0]) + " at " + str(party1.mons[0].temp_stats[0]) + "/" + str(party1.mons[0].stats[0]))
@@ -46,8 +99,6 @@ class Combat:
             party2.mons[0].temp_stats[i] = party2.mons[0].stats[i] * party2.mons[0].boosts[i]
         self.to_attack = True
         self.to_continue = True
-        print("Attack(0), Switch(1), Item(2) (NYI) or Flee(3)?")
-        action = int(input())
         if len(list(filter(None, party2.mons))) > 1:
             if not self.is_trainer:
                 enemy_move = random.choice(self.battlers.get(2).moves + ["switch", "run"])
@@ -90,6 +141,18 @@ class Combat:
                         print("you lost")
                         self.to_continue = False
         elif action == 0:
+            self.screen.blit(pygame.image.load("imgs/Textbox.png"), (0, 1080-261))
+            moves = self.battlers.get(1).moves
+            self.screen.blit(font.render(moves[0].name, False, (255, 0, 0)), (100, 860))
+            self.screen.blit(font.render("PP " + str(moves[0].current_pp) + "/" + str(moves[0].max_pp), False, (0, 0, 0)), (1450, 860))
+            self.screen.blit(pygame.transform.scale2x(moves[0].type.get_sprite()), (1450, 960))
+            if len(moves) > 1:
+                self.screen.blit(font.render(moves[1].name, False, (0, 0, 0)), (600, 860))
+            if len(moves) > 2:
+                self.screen.blit(font.render(moves[2].name, False, (0, 0, 0)), (100, 960))
+            if len(moves) == 4:
+                self.screen.blit(font.render(moves[3].name, False, (0, 0, 0)), (600, 960))
+            pygame.display.flip()
             print("Which move?")
             for i in range(len(self.battlers.get(1).moves)):
                 print(self.battlers.get(1).moves[i].name + "? write " + str(i) + "!")
@@ -205,9 +268,3 @@ class Combat:
         else:
             print("but it missed!")
             return "miss"
-        
-        
-if __name__ == "__main__":
-    p1 = Party(Monster.Fravicode(100))
-    p2 = Party(Monster.Larchanter(100))
-    Combat(p1, p2, "normal", True)

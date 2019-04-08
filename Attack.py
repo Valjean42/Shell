@@ -54,7 +54,7 @@ def stat_change(mon, stat, change):
 
 
 class Attack:
-    def __init__(self, name, type1, power, accuracy, desc, additions, targets, priority, kind):
+    def __init__(self, name, type1, power, accuracy, desc, additions, targets, priority, kind, max_pp):
         self.name = name
         self.type = type1
         self.power = power
@@ -64,6 +64,8 @@ class Attack:
         self.priority = priority
         self.targets = targets
         self.kind = kind
+        self.max_pp = max_pp
+        self.current_pp = max_pp
 
     def calc_eff(self, defender):
         modifier = 1
@@ -83,6 +85,7 @@ class Attack:
         return modifier
 
     def use(self, user, target,  weather):
+        self.current_pp -= 1
         if random.randint(1, 100) <= self.accuracy:
             return self.dmg_calc(user, target, weather)
         else:
@@ -129,10 +132,11 @@ class Attack:
 
 
 class StatusAttack(Attack):
-    def __init__(self, name, type1, accuracy, desc, additions, targets, priority):
-        Attack.__init__(self, name, type1, 0, accuracy, desc, additions, targets, priority, "status")
+    def __init__(self, name, type1, accuracy, desc, additions, targets, priority, max_pp):
+        Attack.__init__(self, name, type1, 0, accuracy, desc, additions, targets, priority, "status", max_pp)
 
     def use(self, user, target,  weather):
+        self.current_pp -= 1
         if target == 0 or random.randint(1, 100) <= 100:
             self.additions(0, user, target, weather)
         else:
@@ -143,7 +147,7 @@ def patch(damage, user, target, weather):
     stat_change(user, 4, 1)
 
 
-pounce = Attack("Pounce", Type.basic, 40, 100, "The user pounces on the enemy", None, 1, 0, "physical")
-patch = StatusAttack("Patch", Type.cyber, 100, "The user downloads a patch, which lowers incoming damage.", patch, 0, 0)
-pixelate = Attack("Pixelate", Type.cyber, 45, 100, "The user makes the opponent lose their 3rd dimension.", None, 1, 0, "special")
-slap = Attack("Slap", Type.basic, 40, 100, "The user slaps the enemy", None, 1, 0, "physical")
+pounce = Attack("Pounce", Type.basic, 40, 100, "The user pounces on the enemy", None, 1, 0, "physical", 35)
+patch = StatusAttack("Patch", Type.cyber, 100, "The user downloads a patch, which lowers incoming damage.", patch, 0, 0, 40)
+pixelate = Attack("Pixelate", Type.cyber, 45, 100, "The user makes the opponent lose their 3rd dimension.", None, 1, 0, "special", 25)
+slap = Attack("Slap", Type.basic, 40, 100, "The user slaps the enemy", None, 1, 0, "physical", 35)

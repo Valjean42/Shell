@@ -138,9 +138,9 @@ class Combat:
                                 self.to_continue = False
         if self.to_continue:
             for item in party1.mons[0].items:
-                item.use(party1.mons[0], "turn_end")
+                item.combat_use(party1.mons[0], "turn_end")
             for item in party2.mons[0].items:
-                item.use(party2.mons[0], "turn_end")
+                item.combat_use(party2.mons[0], "turn_end")
             self.turn(party1, party2, amount + 1)
 
     def ai_switch(self, party1, party2):

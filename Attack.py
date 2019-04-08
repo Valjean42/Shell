@@ -143,11 +143,24 @@ class StatusAttack(Attack):
             print("But it failed!")
 
 
-def patch(damage, user, target, weather):
-    stat_change(user, 4, 1)
+class Pounce(Attack):
+    def __init__(self):
+        Attack.__init__(self, "Pounce", Type.basic, 40, 100, "The user pounces on the enemy", None, 1, 0, "physical", 35)
 
 
-pounce = Attack("Pounce", Type.basic, 40, 100, "The user pounces on the enemy", None, 1, 0, "physical", 35)
-patch = StatusAttack("Patch", Type.cyber, 100, "The user downloads a patch, which lowers incoming damage.", patch, 0, 0, 40)
-pixelate = Attack("Pixelate", Type.cyber, 45, 100, "The user makes the opponent lose their 3rd dimension.", None, 1, 0, "special", 25)
-slap = Attack("Slap", Type.basic, 40, 100, "The user slaps the enemy", None, 1, 0, "physical", 35)
+class Patch(StatusAttack):
+    def patch(self, damage, user, target, weather):
+        stat_change(user, 4, 1)
+
+    def __init__(self):
+        StatusAttack.__init__(self, "Patch", Type.cyber, 100, "The user downloads a patch, which lowers incoming damage.", self.patch, 0, 0, 40)
+
+
+class Pixelate(Attack):
+    def __init__(self):
+        Attack.__init__(self, "Pixelate", Type.cyber, 45, 100, "The user makes the opponent lose their 3rd dimension.", None, 1, 0, "special", 25)
+
+
+class Slap(Attack):
+    def __init__(self):
+        Attack.__init__(self, "Slap", Type.basic, 40, 100, "The user slaps the enemy", None, 1, 0, "physical", 35)

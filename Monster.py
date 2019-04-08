@@ -50,6 +50,8 @@ class Monster:
             self.moves = random.sample(self.possibles, 4) if len(self.possibles) > 3 else self.possibles
         else:
             self.moves = moves
+        for i in range(len(self.moves)):
+            self.moves[i] = self.moves[i]()
         self.ability.passive(self)
 
     def stat_calc(self):
@@ -63,9 +65,9 @@ class Monster:
 
 
 class Fravicode(Monster):
-    possible_attacks = {1: Attack.pounce,
-                        6: Attack.patch,
-                        7: Attack.pixelate}
+    possible_attacks = {1: Attack.Pounce,
+                        6: Attack.Patch,
+                        7: Attack.Pixelate}
 
     def __init__(self, level, moves=None, ability=None):
         Monster.__init__(self, species="Fravicode", main_ability=Ability.connection, type1=Type.cyber,
@@ -74,7 +76,7 @@ class Fravicode(Monster):
 
 
 class Larchanter(Monster):
-    possible_attacks = {1: Attack.slap}
+    possible_attacks = {1: Attack.Slap}
 
     def __init__(self, level, moves=None, ability=None):
         Monster.__init__(self, species="Larchanter", main_ability=Ability.essence, type1=Type.magic,

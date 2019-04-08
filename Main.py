@@ -4,6 +4,7 @@ import Monster
 from Combat import Combat
 import threading
 
+
 def wait(mili):
     pygame.time.wait(mili)
 
@@ -25,10 +26,11 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 done = True
-        if keys[pygame.K_RETURN]:
-            p1 = Party(Monster.Larchanter(100))
-            p2 = Party(Monster.Larchanter(100))
-            Combat(p1, p2, "normal", True, screen)
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                p1 = Party(Monster.Larchanter(100))
+                p2 = Party(Monster.Larchanter(100))
+                Combat(p1, p2, "normal", True, screen)
+
 
 
 if __name__ == "__main__":

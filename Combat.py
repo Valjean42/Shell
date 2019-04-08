@@ -32,16 +32,10 @@ class Combat:
         
     def turn(self, party1, party2, amount):
         font = pygame.font.SysFont('Power Red and Blue', 70)
-        self.screen.blit(font.render("What will " + party1.mons[0].name + " do?", False, (0, 0, 0)), (100, 860))
-        self.screen.blit(font.render("Fight", False, (255, 0, 0)), (1300, 860))
-        self.screen.blit(font.render("Pokemon", False, (0, 0, 0)), (1300, 960))
-        self.screen.blit(font.render("Bag", False, (0, 0, 0)), (1600, 860))
-        self.screen.blit(font.render("Run", False, (0, 0, 0)), (1600, 960))
         pygame.display.flip()
-        keys = pygame.key.get_pressed()
+        done = False
         action = 0
-        while not keys[pygame.K_c]:
-            print(action)
+        while not done:
             pygame.time.wait(20)
             self.screen.blit(pygame.image.load("imgs/Textbox.png"), (0, 1080-261))
             self.screen.blit(font.render("What will " + party1.mons[0].name + " do?", False, (0, 0, 0)), (100, 860))
@@ -65,25 +59,29 @@ class Combat:
                 self.screen.blit(font.render("Pokemon", False, (0, 0, 0)), (1300, 960))
                 self.screen.blit(font.render("Bag", False, (0, 0, 0)), (1600, 860))
                 self.screen.blit(font.render("Run", False, (255, 0, 0)), (1600, 960))
-            if keys[pygame.K_DOWN] and action == 0:
-                action = 1
-            if keys[pygame.K_UP] and action == 1:
-                action = 0
-            if keys[pygame.K_DOWN] and action == 2:
-                action = 3
-            if keys[pygame.K_UP] and action == 3:
-                action = 2
-            if keys[pygame.K_LEFT] and action == 3:
-                action = 1
-            if keys[pygame.K_RIGHT] and action == 1:
-                action = 3
-            if keys[pygame.K_LEFT] and action == 2:
-                action = 0
-            if keys[pygame.K_RIGHT] and action == 0:
-                action = 2
-            keys = pygame.key.get_pressed()
-
-
+            pygame.display.flip()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    done = True
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_DOWN and action == 0:
+                        action = 1
+                    if event.key == pygame.K_UP and action == 1:
+                        action = 0
+                    if event.key == pygame.K_DOWN and action == 2:
+                        action = 3
+                    if event.key == pygame.K_UP and action == 3:
+                        action = 2
+                    if event.key == pygame.K_LEFT and action == 3:
+                        action = 1
+                    if event.key == pygame.K_RIGHT and action == 1:
+                        action = 3
+                    if event.key == pygame.K_LEFT and action == 2:
+                        action = 0
+                    if event.key == pygame.K_RIGHT and action == 0:
+                        action = 2
+                    if event.key == pygame.K_c:
+                        done = True
         print("Your mon:")
         print(str(party1.mons[0]) + " at " + str(party1.mons[0].temp_stats[0]) + "/" + str(party1.mons[0].stats[0]))
         print("[" + str(party1.mons[0].boosts[1]) + " ATK, " + str(party1.mons[0].boosts[2]) + " DEF, "
@@ -141,11 +139,12 @@ class Combat:
                         print("you lost")
                         self.to_continue = False
         elif action == 0:
+            num = 0
             self.screen.blit(pygame.image.load("imgs/Textbox.png"), (0, 1080-261))
             moves = self.battlers.get(1).moves
             self.screen.blit(font.render(moves[0].name, False, (255, 0, 0)), (100, 860))
-            self.screen.blit(font.render("PP " + str(moves[0].current_pp) + "/" + str(moves[0].max_pp), False, (0, 0, 0)), (1450, 860))
-            self.screen.blit(pygame.transform.scale2x(moves[0].type.get_sprite()), (1450, 960))
+            self.screen.blit(font.render("PP " + str(moves[num].current_pp) + "/" + str(moves[0].max_pp), False, (0, 0, 0)), (1450, 860))
+            self.screen.blit(pygame.transform.scale2x(moves[num].type.get_sprite()), (1450, 960))
             if len(moves) > 1:
                 self.screen.blit(font.render(moves[1].name, False, (0, 0, 0)), (600, 860))
             if len(moves) > 2:
@@ -156,7 +155,68 @@ class Combat:
             print("Which move?")
             for i in range(len(self.battlers.get(1).moves)):
                 print(self.battlers.get(1).moves[i].name + "? write " + str(i) + "!")
-            num = int(input())
+
+            done = False
+            while not done:
+                pygame.time.wait(20)
+                self.screen.blit(pygame.image.load("imgs/Textbox.png"), (0, 1080 - 261))
+                if num == 0:
+                    self.screen.blit(font.render(moves[0].name, False, (255, 0, 0)), (100, 860))
+                    if len(moves) > 1:
+                        self.screen.blit(font.render(moves[1].name, False, (0, 0, 0)), (600, 860))
+                    if len(moves) > 2:
+                        self.screen.blit(font.render(moves[2].name, False, (0, 0, 0)), (100, 960))
+                    if len(moves) == 4:
+                        self.screen.blit(font.render(moves[3].name, False, (0, 0, 0)), (600, 960))
+                elif num == 1:
+                    self.screen.blit(font.render(moves[0].name, False, (0, 0, 0)), (100, 860))
+                    if len(moves) > 1:
+                        self.screen.blit(font.render(moves[1].name, False, (255, 0, 0)), (600, 860))
+                    if len(moves) > 2:
+                        self.screen.blit(font.render(moves[2].name, False, (0, 0, 0)), (100, 960))
+                    if len(moves) == 4:
+                        self.screen.blit(font.render(moves[3].name, False, (0, 0, 0)), (600, 960))
+                elif num == 2:
+                    self.screen.blit(font.render(moves[0].name, False, (0, 0, 0)), (100, 860))
+                    if len(moves) > 1:
+                        self.screen.blit(font.render(moves[1].name, False, (0, 0, 0)), (600, 860))
+                    if len(moves) > 2:
+                        self.screen.blit(font.render(moves[2].name, False, (255, 0, 0)), (100, 960))
+                    if len(moves) == 4:
+                        self.screen.blit(font.render(moves[3].name, False, (0, 0, 0)), (600, 960))
+                else:
+                    self.screen.blit(font.render(moves[0].name, False, (0, 0, 0)), (100, 860))
+                    if len(moves) > 1:
+                        self.screen.blit(font.render(moves[1].name, False, (0, 0, 0)), (600, 860))
+                    if len(moves) > 2:
+                        self.screen.blit(font.render(moves[2].name, False, (0, 0, 0)), (100, 960))
+                    if len(moves) == 4:
+                        self.screen.blit(font.render(moves[3].name, False, (255, 0, 0)), (600, 960))
+                self.screen.blit(font.render("PP " + str(moves[num].current_pp) + "/" + str(moves[num].max_pp), False, (0, 0, 0)),(1450, 860))
+                self.screen.blit(pygame.transform.scale(moves[num].type.get_sprite(), (256, 96)), (1450, 960))
+                pygame.display.flip()
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        done = True
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_DOWN and num == 0 and len(moves) > 1:
+                            num = 1
+                        if event.key == pygame.K_UP and num == 1:
+                            num = 0
+                        if event.key == pygame.K_DOWN and num == 2 and len(moves) > 3:
+                            num = 3
+                        if event.key == pygame.K_UP and num == 3:
+                            num = 2
+                        if event.key == pygame.K_LEFT and num == 3:
+                            num = 1
+                        if event.key == pygame.K_RIGHT and num == 1 and len(moves) > 3:
+                            num = 3
+                        if event.key == pygame.K_LEFT and num == 2:
+                            num = 0
+                        if event.key == pygame.K_RIGHT and num == 0 and len(moves) > 2:
+                            num = 2
+                        if event.key == pygame.K_c:
+                            done = True
             player_move = self.battlers.get(1).moves[num]
             if str(enemy_move) == "switch":
                 self.ai_switch(party1, party2)

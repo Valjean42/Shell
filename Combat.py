@@ -1,22 +1,36 @@
 from Party import Party
 import Monster
 import random
-import Ability
+import pygame
 
 
 class Combat:
-    def __init__(self, party1, party2, weather, trainer):
+    def __init__(self, party1, party2, weather, trainer, screen):
         self.is_trainer = trainer
+        screen.blit(pygame.image.load("imgs/Combat_BG.png"), (0, 0))
+        if party1.mons[0].shiny:
+            screen.blit(pygame.image.load("imgs/" + party1.mons[0].name + "_back_shiny.png"), (150, 540))
+        else:
+            screen.blit(pygame.image.load("imgs/" + party1.mons[0].name + "_back_normal.png"), (150, 540))
+        if party2.mons[0].shiny:
+            screen.blit(pygame.image.load("imgs/" + party1.mons[0].name + "_front_shiny.png"), (1100, 200))
+        else:
+            screen.blit(pygame.image.load("imgs/" + party1.mons[0].name + "_front_normal.png"), (1100, 200))
+        screen.blit(pygame.image.load("imgs/Textbox.png"), (0, 1080-261))
         self.battlers = {1: party1.mons[0], 2: party2.mons[0]}
         self.weather = weather
         if party1.mons[0].temp_stats[5] < party2.mons[0].temp_stats[5]:
             self.battlers = {2: party2.mons[0], 1:party1.mons[0]}
+        if party1.mons[0].shiny:
+            screen.blit()
         list(self.battlers.values())[0].ability.activate(list(self.battlers.values())[0], list(self.battlers.values())[1], None, "in")
         list(self.battlers.values())[1].ability.activate(list(self.battlers.values())[1], list(self.battlers.values())[0], None, "in")
         self.to_continue = True
+        pygame.display.flip()
         self.turn(party1, party2, 1)
         
     def turn(self, party1, party2, amount):
+
         print("Your mon:")
         print(str(party1.mons[0]) + " at " + str(party1.mons[0].temp_stats[0]) + "/" + str(party1.mons[0].stats[0]))
         print("[" + str(party1.mons[0].boosts[1]) + " ATK, " + str(party1.mons[0].boosts[2]) + " DEF, "

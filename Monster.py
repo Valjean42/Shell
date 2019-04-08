@@ -4,6 +4,7 @@ import Type
 import Attack
 import Ability
 import Item
+import pygame
 
 
 class Monster:
@@ -12,6 +13,10 @@ class Monster:
     def __init__(self, species, main_ability, type1, base_stats, level,
                  second_ability=None, hidden_ability=None, type2=None, moves=None, item=Item.empty,
                  ability=None):
+        if random.randint(1, 4096) == 1:
+            self.shiny = True
+        else:
+            self.shiny = False
         self.name = species
         self.abilities = [main_ability, second_ability] if second_ability is not None else [main_ability]
         self.HA = hidden_ability

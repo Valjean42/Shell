@@ -11,25 +11,27 @@ def wait(mili):
 
 def main():
     pygame.init()
-    done = False
+    run = True
     bg = pygame.image.load("imgs/BG1.png")
 
     screen = pygame.display.set_mode((1920, 1080), flags=pygame.FULLSCREEN)
 
     screen.blit(bg, (0, 0))
     pygame.display.flip()
-    while not done:
+    while run:
         wait(20)
         keys = pygame.key.get_pressed()
         if keys[pygame.K_ESCAPE]:
-            done = True
+            run = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                done = True
+                run = False
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 p1 = Party(Monster.Larchanter(100))
                 p2 = Party(Monster.Larchanter(100))
                 Combat(p1, p2, "normal", True, screen)
+                screen.blit(bg, (0, 0))
+                pygame.display.flip()
 
 
 

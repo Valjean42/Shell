@@ -31,38 +31,38 @@ class Combat:
         self.turn(party1, party2, 1)
         
     def turn(self, party1, party2, amount):
-        font = pygame.font.SysFont('Power Red and Blue', 70)
+        self.font = pygame.font.SysFont('Power Red and Blue', 72)
         pygame.display.flip()
-        done = False
+        run = True
         action = 0
-        while not done:
+        while run:
             pygame.time.wait(20)
             self.screen.blit(pygame.image.load("imgs/Textbox.png"), (0, 1080-261))
-            self.screen.blit(font.render("What will " + party1.mons[0].name + " do?", False, (0, 0, 0)), (100, 860))
+            self.screen.blit(self.font.render("What will " + party1.mons[0].name + " do?", False, (0, 0, 0)), (100, 860))
             if action == 0:
-                self.screen.blit(font.render("Fight", False, (255, 0, 0)), (1300, 860))
-                self.screen.blit(font.render("Pokemon", False, (0, 0, 0)), (1300, 960))
-                self.screen.blit(font.render("Bag", False, (0, 0, 0)), (1600, 860))
-                self.screen.blit(font.render("Run", False, (0, 0, 0)), (1600, 960))
+                self.screen.blit(self.font.render("Fight", False, (255, 0, 0)), (1300, 860))
+                self.screen.blit(self.font.render("Pokemon", False, (0, 0, 0)), (1300, 960))
+                self.screen.blit(self.font.render("Bag", False, (0, 0, 0)), (1600, 860))
+                self.screen.blit(self.font.render("Run", False, (0, 0, 0)), (1600, 960))
             elif action == 1:
-                self.screen.blit(font.render("Fight", False, (0, 0, 0)), (1300, 860))
-                self.screen.blit(font.render("Pokemon", False, (255, 0, 0)), (1300, 960))
-                self.screen.blit(font.render("Bag", False, (0, 0, 0)), (1600, 860))
-                self.screen.blit(font.render("Run", False, (0, 0, 0)), (1600, 960))
+                self.screen.blit(self.font.render("Fight", False, (0, 0, 0)), (1300, 860))
+                self.screen.blit(self.font.render("Pokemon", False, (255, 0, 0)), (1300, 960))
+                self.screen.blit(self.font.render("Bag", False, (0, 0, 0)), (1600, 860))
+                self.screen.blit(self.font.render("Run", False, (0, 0, 0)), (1600, 960))
             elif action == 2:
-                self.screen.blit(font.render("Fight", False, (0, 0, 0)), (1300, 860))
-                self.screen.blit(font.render("Pokemon", False, (0, 0, 0)), (1300, 960))
-                self.screen.blit(font.render("Bag", False, (255, 0, 0)), (1600, 860))
-                self.screen.blit(font.render("Run", False, (0, 0, 0)), (1600, 960))
+                self.screen.blit(self.font.render("Fight", False, (0, 0, 0)), (1300, 860))
+                self.screen.blit(self.font.render("Pokemon", False, (0, 0, 0)), (1300, 960))
+                self.screen.blit(self.font.render("Bag", False, (255, 0, 0)), (1600, 860))
+                self.screen.blit(self.font.render("Run", False, (0, 0, 0)), (1600, 960))
             else:
-                self.screen.blit(font.render("Fight", False, (0, 0, 0)), (1300, 860))
-                self.screen.blit(font.render("Pokemon", False, (0, 0, 0)), (1300, 960))
-                self.screen.blit(font.render("Bag", False, (0, 0, 0)), (1600, 860))
-                self.screen.blit(font.render("Run", False, (255, 0, 0)), (1600, 960))
+                self.screen.blit(self.font.render("Fight", False, (0, 0, 0)), (1300, 860))
+                self.screen.blit(self.font.render("Pokemon", False, (0, 0, 0)), (1300, 960))
+                self.screen.blit(self.font.render("Bag", False, (0, 0, 0)), (1600, 860))
+                self.screen.blit(self.font.render("Run", False, (255, 0, 0)), (1600, 960))
             pygame.display.flip()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    done = True
+                    run = False
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_DOWN and action == 0:
                         action = 1
@@ -81,7 +81,7 @@ class Combat:
                     if event.key == pygame.K_RIGHT and action == 0:
                         action = 2
                     if event.key == pygame.K_c:
-                        done = True
+                        run = False
         print("Your mon:")
         print(str(party1.mons[0]) + " at " + str(party1.mons[0].temp_stats[0]) + "/" + str(party1.mons[0].stats[0]))
         print("[" + str(party1.mons[0].boosts[1]) + " ATK, " + str(party1.mons[0].boosts[2]) + " DEF, "
@@ -101,7 +101,6 @@ class Combat:
             if not self.is_trainer:
                 enemy_move = random.choice(self.battlers.get(2).moves + ["switch", "run"])
             else:
-                print("yas")
                 enemy_move = random.choice(self.battlers.get(2).moves + ["switch"])
         else:
             if not self.is_trainer:
@@ -109,13 +108,16 @@ class Combat:
             else:
                 enemy_move = random.choice(self.battlers.get(2).moves)
         if str(enemy_move) == "run":
+            self.show_text("Enemy ran away!")
             print("enemy ran!")
             self.to_continue = False
         elif action == 3:
             if not self.is_trainer:
+                self.show_text("You ran!")
                 print("you ran!")
                 self.to_continue = False
             else:
+                self.show_text("You cannot run from a trainer battle!")
                 print("Can't run from a trainer battle!")
         elif action == 1:
             if party1.living_mons() > 1:
@@ -125,83 +127,86 @@ class Combat:
                     self.battlers = {2: party2.mons[0], 1: party1.mons[0]}
             else:
                 print("Can't switch!")
-                self.show_text("Can't switch!", font)
+                self.show_text("Can't switch!")
             if str(enemy_move) == "switch":
                 self.ai_switch(party1, party2)
                 self.battlers = {1: party1.mons[0], 2: party2.mons[0]}
                 if party1.mons[0].temp_stats[5] < party2.mons[0].temp_stats[5]:
                     self.battlers = {2: party2.mons[0], 1: party1.mons[0]}
             else:
+                self.show_text("The enemy attacks with " + str(enemy_move))
                 print("The enemy attacks with " + str(enemy_move))
                 if self.attack(party2.mons[0], enemy_move, party1.mons[0]) == "ded":
+                    self.show_text(party1.mons[0].name + " fainted!")
                     print("Your mon died")
-                    if self.player_switch(party1, party2) == "able":
+                    if party1.living_mons() > 0:
+                        self.player_switch(party1, party2)
                         self.battlers = {1: party1.mons[0], 2: party2.mons[0]}
                         if party1.mons[0].temp_stats[5] < party2.mons[0].temp_stats[5]:
                             self.battlers = {2: party2.mons[0], 1: party1.mons[0]}
                     else:
+                        self.show_text("You lost the battle!")
                         print("you lost")
                         self.to_continue = False
         elif action == 0:
             num = 0
             self.screen.blit(pygame.image.load("imgs/Textbox.png"), (0, 1080-261))
             moves = self.battlers.get(1).moves
-            self.screen.blit(font.render(moves[0].name, False, (255, 0, 0)), (100, 860))
-            self.screen.blit(font.render("PP " + str(moves[num].current_pp) + "/" + str(moves[0].max_pp), False, (0, 0, 0)), (1450, 860))
+            self.screen.blit(self.font.render(moves[0].name, False, (255, 0, 0)), (100, 860))
+            self.screen.blit(self.font.render("PP " + str(moves[num].current_pp) + "/" + str(moves[0].max_pp), False, (0, 0, 0)), (1450, 860))
             self.screen.blit(pygame.transform.scale2x(moves[num].type.get_sprite()), (1450, 960))
             if len(moves) > 1:
-                self.screen.blit(font.render(moves[1].name, False, (0, 0, 0)), (600, 860))
+                self.screen.blit(self.font.render(moves[1].name, False, (0, 0, 0)), (600, 860))
             if len(moves) > 2:
-                self.screen.blit(font.render(moves[2].name, False, (0, 0, 0)), (100, 960))
+                self.screen.blit(self.font.render(moves[2].name, False, (0, 0, 0)), (100, 960))
             if len(moves) == 4:
-                self.screen.blit(font.render(moves[3].name, False, (0, 0, 0)), (600, 960))
+                self.screen.blit(self.font.render(moves[3].name, False, (0, 0, 0)), (600, 960))
             pygame.display.flip()
             print("Which move?")
             for i in range(len(self.battlers.get(1).moves)):
                 print(self.battlers.get(1).moves[i].name + "? write " + str(i) + "!")
-
-            done = False
-            while not done:
+            run = True
+            while run:
                 pygame.time.wait(20)
                 self.screen.blit(pygame.image.load("imgs/Textbox.png"), (0, 1080 - 261))
                 if num == 0:
-                    self.screen.blit(font.render(moves[0].name, False, (255, 0, 0)), (100, 860))
+                    self.screen.blit(self.font.render(moves[0].name, False, (255, 0, 0)), (100, 860))
                     if len(moves) > 1:
-                        self.screen.blit(font.render(moves[1].name, False, (0, 0, 0)), (600, 860))
+                        self.screen.blit(self.font.render(moves[1].name, False, (0, 0, 0)), (600, 860))
                     if len(moves) > 2:
-                        self.screen.blit(font.render(moves[2].name, False, (0, 0, 0)), (100, 960))
+                        self.screen.blit(self.font.render(moves[2].name, False, (0, 0, 0)), (100, 960))
                     if len(moves) == 4:
-                        self.screen.blit(font.render(moves[3].name, False, (0, 0, 0)), (600, 960))
+                        self.screen.blit(self.font.render(moves[3].name, False, (0, 0, 0)), (600, 960))
                 elif num == 1:
-                    self.screen.blit(font.render(moves[0].name, False, (0, 0, 0)), (100, 860))
+                    self.screen.blit(self.font.render(moves[0].name, False, (0, 0, 0)), (100, 860))
                     if len(moves) > 1:
-                        self.screen.blit(font.render(moves[1].name, False, (255, 0, 0)), (600, 860))
+                        self.screen.blit(self.font.render(moves[1].name, False, (255, 0, 0)), (600, 860))
                     if len(moves) > 2:
-                        self.screen.blit(font.render(moves[2].name, False, (0, 0, 0)), (100, 960))
+                        self.screen.blit(self.font.render(moves[2].name, False, (0, 0, 0)), (100, 960))
                     if len(moves) == 4:
-                        self.screen.blit(font.render(moves[3].name, False, (0, 0, 0)), (600, 960))
+                        self.screen.blit(self.font.render(moves[3].name, False, (0, 0, 0)), (600, 960))
                 elif num == 2:
-                    self.screen.blit(font.render(moves[0].name, False, (0, 0, 0)), (100, 860))
+                    self.screen.blit(self.font.render(moves[0].name, False, (0, 0, 0)), (100, 860))
                     if len(moves) > 1:
-                        self.screen.blit(font.render(moves[1].name, False, (0, 0, 0)), (600, 860))
+                        self.screen.blit(self.font.render(moves[1].name, False, (0, 0, 0)), (600, 860))
                     if len(moves) > 2:
-                        self.screen.blit(font.render(moves[2].name, False, (255, 0, 0)), (100, 960))
+                        self.screen.blit(self.font.render(moves[2].name, False, (255, 0, 0)), (100, 960))
                     if len(moves) == 4:
-                        self.screen.blit(font.render(moves[3].name, False, (0, 0, 0)), (600, 960))
+                        self.screen.blit(self.font.render(moves[3].name, False, (0, 0, 0)), (600, 960))
                 else:
-                    self.screen.blit(font.render(moves[0].name, False, (0, 0, 0)), (100, 860))
+                    self.screen.blit(self.font.render(moves[0].name, False, (0, 0, 0)), (100, 860))
                     if len(moves) > 1:
-                        self.screen.blit(font.render(moves[1].name, False, (0, 0, 0)), (600, 860))
+                        self.screen.blit(self.font.render(moves[1].name, False, (0, 0, 0)), (600, 860))
                     if len(moves) > 2:
-                        self.screen.blit(font.render(moves[2].name, False, (0, 0, 0)), (100, 960))
+                        self.screen.blit(self.font.render(moves[2].name, False, (0, 0, 0)), (100, 960))
                     if len(moves) == 4:
-                        self.screen.blit(font.render(moves[3].name, False, (255, 0, 0)), (600, 960))
-                self.screen.blit(font.render("PP " + str(moves[num].current_pp) + "/" + str(moves[num].max_pp), False, (0, 0, 0)),(1450, 860))
+                        self.screen.blit(self.font.render(moves[3].name, False, (255, 0, 0)), (600, 960))
+                self.screen.blit(self.font.render("PP " + str(moves[num].current_pp) + "/" + str(moves[num].max_pp), False, (0, 0, 0)),(1450, 860))
                 self.screen.blit(pygame.transform.scale(moves[num].type.get_sprite(), (256, 96)), (1450, 960))
                 pygame.display.flip()
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
-                        done = True
+                        run = False
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_DOWN and num == 0 and len(moves) > 1:
                             num = 1
@@ -220,44 +225,52 @@ class Combat:
                         if event.key == pygame.K_RIGHT and num == 0 and len(moves) > 2:
                             num = 2
                         if event.key == pygame.K_c:
-                            done = True
+                            run = False
             player_move = self.battlers.get(1).moves[num]
             if str(enemy_move) == "switch":
                 self.ai_switch(party1, party2)
                 if self.attack(party1.mons[0], player_move, party2.mons[0]) == "ded":
+                    self.show_text("The enemy mon fainted!")
                     print("The enemy died")
                     if self.ai_switch(party1, party2) == "able":
                         self.battlers = {1: party1.mons[0], 2: party2.mons[0]}
                         if party1.mons[0].temp_stats[5] < party2.mons[0].temp_stats[5]:
                             self.battlers = {2: party2.mons[0], 1: party1.mons[0]}
                     else:
+                        self.show_text("You won!")
                         print("you won!")
                         self.to_continue = False
             else:
                 if list(self.battlers.keys())[0] == 2:
+                    self.show_text("The enemy attacks with " + str(enemy_move))
                     print("The enemy attacks with " + str(enemy_move))
                     if self.attack(party2.mons[0], enemy_move, party1.mons[0]) == "ded":
                         print("Your mon died")
-                        if party1.living_mons() > 1:
+                        self.show_text("Your mon fainted!")
+                        if party1.living_mons() > 0:
                             self.player_switch(party1, party2)
                             self.battlers = {1: party1.mons[0], 2: party2.mons[0]}
                             if party1.mons[0].temp_stats[5] < party2.mons[0].temp_stats[5]:
                                 self.battlers = {2: party2.mons[0], 1: party1.mons[0]}
                             self.to_attack = False
                         else:
+                            self.show_text("You lost!")
                             print("you lost")
                             self.to_continue = False
                     if self.to_continue and self.to_attack and self.attack(party1.mons[0], player_move, party2.mons[0]) == "ded":
+                        self.show_text("The enemy mon fainted!")
                         print("The enemy died")
                         if self.ai_switch(party1, party2) == "able":
                             self.battlers = {1: party1.mons[0], 2: party2.mons[0]}
                             if party1.mons[0].temp_stats[5] < party2.mons[0].temp_stats[5]:
                                 self.battlers = {2: party2.mons[0], 1: party1.mons[0]}
                         else:
+                            self.show_text("You won!")
                             print("you won!")
                             self.to_continue = False
                 else:
                     if self.attack(party1.mons[0], player_move, party2.mons[0]) == "ded":
+                        self.show_text("The enemy mon fainted!")
                         print("The enemy died")
                         if self.ai_switch(party1, party2) == "able":
                             self.battlers = {1: party1.mons[0], 2: party2.mons[0]}
@@ -265,18 +278,22 @@ class Combat:
                                 self.battlers = {2: party2.mons[0], 1: party1.mons[0]}
                             self.to_attack = False
                         else:
+                            self.show_text("You won!")
                             print("you won!")
                             self.to_continue = False
                     else:
+                        self.show_text("The enemy attacks with " + str(enemy_move))
                         print("The enemy attacks with " + str(enemy_move))
                         if self.to_continue and self.to_attack and self.attack(party2.mons[0], enemy_move, party1.mons[0]) == "ded":
+                            self.show_text("Your mon fainted!")
                             print("Your mon died")
-                            if party1.living_mons() > 1:
+                            if party1.living_mons() > 0:
                                 self.player_switch(party1, party2)
                                 self.battlers = {1: party1.mons[0], 2: party2.mons[0]}
                                 if party1.mons[0].temp_stats[5] < party2.mons[0].temp_stats[5]:
                                     self.battlers = {2: party2.mons[0], 1: party1.mons[0]}
                             else:
+                                self.show_text("You lost!")
                                 print("you lost")
                                 self.to_continue = False
         if self.to_continue:
@@ -298,6 +315,7 @@ class Combat:
             party2.mons[0].boosts = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
             party2.switch(1, random.choice(available_mons))
             party2.mons[0].ability.activate(party2.mons[0], party1.mons[0], None, "switch_in")
+            self.show_text("Enemy switches to " + str(party2.mons[0]))
             print("Enemy switches to " + str(party2.mons[0]))
             self.battlers = {1: party1.mons[0], 2: party2.mons[0]}
             if party1.mons[0].temp_stats[5] < party2.mons[0].temp_stats[5]:
@@ -332,14 +350,17 @@ class Combat:
             target.ability.activate(target, user, move, "defending")
             return move.use(user, target, self.weather)
         else:
+            self.show_text("But it missed!")
             print("but it missed!")
             return "miss"
 
-    def show_text(self, text, font):
-        self.screen.blit(pygame.image.load("Textbox.png"))
-        self.screen.blit(font.render(text, False, (0, 0, 0)))
-        while True:
+    def show_text(self, text):
+        self.screen.blit(pygame.image.load("imgs/Textbox.png"), (0, 1080-261))
+        self.screen.blit(self.font.render(text, False, (0, 0, 0)), (100, 910))
+        pygame.display.flip()
+        wait = True
+        while wait:
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_c:
-                        break
+                        wait = False
